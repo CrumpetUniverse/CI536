@@ -3,9 +3,12 @@
 #include "CI536GameModeBase.h"
 #include "CI536GameInstance.h"
 
-#include "Kismet/GameplayStatics.h"
-#include "GameFramework/Character.h"
+// Copyright © 1998 Epic Games, Inc.
+
 #include "Components/SkeletalMeshComponent.h"
+#include "GameFramework/Character.h"
+#include "GameFramework/PlayerStart.h"
+#include "Kismet/GameplayStatics.h"
 
 #define MAX_PLAYERS 4
 
@@ -14,7 +17,7 @@ void ACI536GameModeBase::BeginPlay()
 	Super::BeginPlay();
 
 	/* Access the game instance. */
-	UCI536GameInstance* GameInstance = Cast<UCI536GameInstance>(GetGameInstance());
+	GameInstance = Cast<UCI536GameInstance>(GetGameInstance());
 
 	if (IsValid(GameInstance))
 	{
@@ -43,7 +46,7 @@ void ACI536GameModeBase::BeginPlay()
 		}
 
 		/* Create the subsequent player controller(s). */
-		for (int i = 1; i < PlayerControllerCount; i++)
+		for (int32 i = 1; i < PlayerControllerCount; i++)
 		{
 			PlayerController = UGameplayStatics::CreatePlayer(World, i, true);
 
@@ -71,7 +74,7 @@ void ACI536GameModeBase::BeginPlay()
 		{
 			if (PlayerStarts.Num() == MAX_PLAYERS)
 			{
-				for (int i = 0; i < PlayerControllerCount; i++)
+				for (int32 i = 0; i < PlayerControllerCount; i++)
 				{
 					PlayerControllers[i]->GetPawn()->SetActorTransform(PlayerStarts[i]->GetTransform());
 				}
@@ -91,12 +94,18 @@ void ACI536GameModeBase::BeginPlay()
 		UE_LOG(LogTemp, Warning, TEXT("Unable to access the world!"));
 	}
 
+	/* Set the player actors. */
+	for (int32 i = 0; i < PlayerControllerCount; i++)
+	{
+		PlayerActors.Add(Cast<AActor>(PlayerControllers[i]->GetPawn()));
+	}
+
 	/* Set the player materials. */
 	if (PlayerMaterials.Num() > 0)
 	{
 		if (PlayerMaterials.Num() == MAX_PLAYERS)
 		{
-			for (int i = 0; i < PlayerControllerCount; i++)
+			for (int32 i = 0; i < PlayerControllerCount; i++)
 			{
 				ACharacter* Character = Cast<ACharacter>(PlayerControllers[i]->GetPawn());
 

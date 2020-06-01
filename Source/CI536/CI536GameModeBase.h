@@ -6,7 +6,6 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
-#include "GameFramework/PlayerStart.h"
 #include "CI536GameModeBase.generated.h"
 
 #pragma endregion
@@ -22,20 +21,27 @@ class CI536_API ACI536GameModeBase : public AGameModeBase
 	GENERATED_BODY()
 
 protected:
-  virtual void BeginPlay() override;
+  /* Cache a casted reference for performance. */
+  class UCI536GameInstance* GameInstance = nullptr;
+
+  virtual void BeginPlay();
 
 public:
   /* The number of players (i.e., non-artificial intelligence). */
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
-  int PlayerControllerCount = -1;
+  int32 PlayerControllerCount = -1;
 
   /* The array of player controllers (i.e., non-artificial intelligence). */
   UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
-  TArray<APlayerController*> PlayerControllers;
+  TArray<class APlayerController*> PlayerControllers;
+
+  /* The array of player actors (i.e., non-artificial intelligence). */
+  UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
+  TArray<class AActor*> PlayerActors;
 
   /* The array of player materials (i.e., red, green, blue, and yellow). */
   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-  TArray<UMaterialInterface*> PlayerMaterials;
+  TArray<class UMaterialInterface*> PlayerMaterials;
 };
 
 #pragma endregion
